@@ -27,7 +27,7 @@ jobs:
       - name: Build Docker Image
         run: docker build -t devops-demo:${{ github.sha }} 
 
-        - name: Configure AWS Credentials
+      - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AKIA5DLF5MKS3QXE3O55}}
