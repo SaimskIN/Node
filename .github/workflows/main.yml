@@ -25,27 +25,28 @@ jobs:
         run: npm test
 
       - name: Build Docker Image
-        run: docker build -t devops-demo:${{ github.sha }} 
+        run: docker build -t devops-demo:${{ github.sha }} .
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AKIA5DLF5MKS3QXE3O55}}
-          aws-secret-access-key: ${{ secrets.vkoi2FnyyjUp3D4P1Hdh9YOsh8uhhcLjwy6IyhVG}}
-          aws-region: ${{ secrets.ap-south-1}}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Login to ECR
         run: |
-          aws ecr get-login-password --region $AWS_REGION | \
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | \
           docker login --username AWS --password-stdin \
-          <your-account-id>.dkr.ecr.${{ secrets.ap-south-1 }}.amazonaws.com
+          ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
 
       - name: Tag Image
         run: |
           docker tag devops-demo:${{ github.sha }} \
-          <your-account-id>.dkr.ecr.${{ secrets.ap-south-1}}.amazonaws.com/${{ secrets.saimskin/devopsproject}}:${{ github.sha }}
+          ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:${{ github.sha }}
 
       - name: Push Image
         run: |
           docker push \
-          <your-account-id>.dkr.ecr.${{ secrets.ap-south-1}}.amazonaws.com/${{ secrets.saimskin/devopsproject }}:${{ github.sha }}
+          ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:${{ github.sha }}
+
